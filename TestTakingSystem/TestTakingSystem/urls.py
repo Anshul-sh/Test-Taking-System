@@ -15,11 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url
 import SchoolManagement.views as SMViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Homepage inside the School Management System 
     path('', SMViews.home),
+    url(r'^login/$', SMViews.login, name='login'),
     # TODO 1: Create the URL for login
 ]

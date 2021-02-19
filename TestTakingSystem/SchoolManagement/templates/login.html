@@ -1,0 +1,26 @@
+{% extends "main/base.html" %}
+{% block stylesheet %}
+<link href="css/login.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class= 'container text-center' >
+    <h2 class="h3 mb-3 font-weight-normal">Login</h2>
+</br>
+  <form method="post" class='form-signin'>
+    {% csrf_token %}
+    {% for field in form %}
+      <p>
+        {{ field.label_tag }}</br>
+         {{ field }}
+        {% if field.help_text %}
+          <small style="color: grey">{{ field.help_text }}</small>
+        {% endif %}
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </p>
+    {% endfor %}
+    <button type="submit">Login</button>
+  </form>
+</div>
+{% endblock %}
