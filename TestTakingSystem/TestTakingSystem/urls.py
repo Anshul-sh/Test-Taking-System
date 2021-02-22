@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Homepage inside the School Management System 
     path('', SMViews.home),
+    # URL for login
     url(r'^login/$', SMViews.login, name='login'),
-    # TODO 1: Create the URL for login
+    
 ]
