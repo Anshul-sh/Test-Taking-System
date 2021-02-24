@@ -20,15 +20,13 @@ class Role(models.Model):
   ROLE_CHOICES = (
       (STUDENT, 'student'),
       (TEACHER, 'teacher'),
-      (SECRETARY, 'secretary'),
-      (SUPERVISOR, 'supervisor'),
       (ADMIN, 'admin'),
   )
 
   id = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, primary_key=True)
 
   def __str__(self):
-      return self.get_id_display()
+      return self.id
 #The user have one or more specified roles. For example a student can be a checker and have access to exam papers.
 class UserManager(AbstractUser):
     role = models.ManyToManyField(Role)
@@ -38,12 +36,23 @@ class Subject(models.Model):
     code = models.IntegerField(default=0,validators=[MaxValueValidator(999), MinValueValidator(100)])
     def __str__(self):
         return self.name
+
 # TODO 3: Create a Student model
 
 class Student(models.Model):
+    email = models.EmailField(
+        verbose_name = 'email_address',
+        max_length=255,
+        unique=True,
+        # validators=email_validator,
+    )
+    first_name = models.CharField(max_length=20,blank=False,null=False)
+    last_name = models.CharField(max_length=20,blank=False,null=False)
+    profile_picture = models.ImageField(upload_to='media/',blank=False)
     user = models.OneToOneField(UserManager, on_delete=models.CASCADE, primary_key=True)
     enrolled = models.ManyToManyField(Subject, related_name='enrolled_subjects')
     approved = models.BooleanField(default=False)
+    USERNAME_FIELD = 'email'
 
 
 # TODO 4: Create a Instructor model 
