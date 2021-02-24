@@ -44,7 +44,6 @@ class Student(models.Model):
         verbose_name = 'email_address',
         max_length=255,
         unique=True,
-        # validators=email_validator,
     )
     first_name = models.CharField(max_length=20,blank=False,null=False)
     last_name = models.CharField(max_length=20,blank=False,null=False)

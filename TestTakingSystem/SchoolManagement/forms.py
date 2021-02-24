@@ -10,12 +10,15 @@ class RegisterForm(UserCreationForm):
 
  class Meta:
   model = Student
-  fields = ['email', 'first_name', 'last_name','profile_picture']
-  
+  fields = ['email', 'first_name', 'last_name','enrolled','profile_picture']
+  widgets = {
+   'enrolled': forms.CheckboxSelectMultiple,
+  }
   labels = {
     'email': 'email',
    'first_name': 'First Name',
    'last_name': 'Last Name',
+   'enrolled':'Enrolled In',
    'profile_picture': 'profile picture'
   }
   

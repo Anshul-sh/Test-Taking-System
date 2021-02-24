@@ -11,7 +11,8 @@ from SchoolManagement.forms import RegisterForm
 
 # Home page for the complete Website 
 def home(request):
-    return render(request,'main\\base.html',{})
+    return render(request,'main\base.html',{})
+
 # TODO 2: Code for login
 def profile(request, *args):
     return HttpResponse('<p>This is the login page test.{user.name}</p>')
@@ -39,8 +40,11 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
-
-    form = RegisterForm()
-
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password')
+            # user = authenticate(username=username, password=raw_password)
+            # login(request, user)
+            return redirect('home')
+    else:
+        form = RegisterForm()
     return render(request, 'register.html', {'form': form})
