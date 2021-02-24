@@ -24,5 +24,6 @@ urlpatterns = [
     path('', SMViews.home),
     # URL for login
     url(r'^login/$', SMViews.login, name='login'),
-    
+    url(r'^profile/$', SMViews.profile, name='profile'),
+    path('faceid/', SMViews.faceid.as_view(), name ='faceid')    
 ]
