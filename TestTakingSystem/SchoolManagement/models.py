@@ -61,3 +61,5 @@ class Teacher(models.Model):
     assigned = models.ManyToManyField(Subject, related_name='assigned_subjects')
     approved = models.BooleanField(default=False)
 
+class ImageTest(models.Model):
+    image = models.ImageField(upload_to='images/', help_text='test image')

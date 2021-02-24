@@ -1,4 +1,8 @@
 {
+<<<<<<< HEAD
     "python.pythonPath": "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.8/bin/python3.8",
     "git.ignoreLimitWarning": true
+=======
+    "python.pythonPath": "a:\\Sync\\Pc\\Final Project\\Test Taking System\\DjangoEnv\\Scripts\\python.exe"
+>>>>>>> 7d6ccccebd333af853314e99c964e8e5bdd70bbe
 }

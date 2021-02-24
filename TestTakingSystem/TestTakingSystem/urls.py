@@ -24,7 +24,12 @@ urlpatterns = [
     path('', SMViews.home),
     # URL for login
     url(r'^login/$', SMViews.login, name='login'),
+<<<<<<< HEAD
     url(r'^register/', SMViews.register, name='register'),
     # TODO 1: Create the URL for login
     
+=======
+    url(r'^profile/$', SMViews.profile, name='profile'),
+    path('faceid/', SMViews.faceid.as_view(), name ='faceid')    
+>>>>>>> 7d6ccccebd333af853314e99c964e8e5bdd70bbe
 ]
