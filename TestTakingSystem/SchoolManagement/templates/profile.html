@@ -6,6 +6,6 @@
 <div class= 'container text-center' >
     <h2 class="h3 mb-3 font-weight-normal">Profile</h2>
 </br>
-    <li>{{ profile.name }}</li>
+    {{ request.user.username }}
 </div>
 {% endblock %}

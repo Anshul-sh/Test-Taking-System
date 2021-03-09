@@ -14,12 +14,12 @@ def facedect(loc):
                 cv2.imwrite("filename.jpg",img)
 
                 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                MEDIA_ROOT =os.path.join(BASE_DIR,'pages')
+                MEDIA_ROOT =os.path.join(BASE_DIR,'SchoolManagement')
 
                 print(MEDIA_ROOT,loc)
                 loc=(str(MEDIA_ROOT)+loc)
                 print(loc)
-                print("/home/light/codes/web/djangoproject/mysite/pages/media/profil_images/IMG_20180330_1600482-01.jpg")
+                print("/images/stored/test.jpg")
                 face_1_image = face_recognition.load_image_file(loc)
                 face_1_face_encoding = face_recognition.face_encodings(face_1_image)[0]
 
@@ -41,4 +41,4 @@ def facedect(loc):
                 else :
                         return False    
 
-facedect('/media/profil_images/IMG_20180330_1600482-01.jpg')
+facedect('x')

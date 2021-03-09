@@ -46,6 +46,7 @@ class Student(models.Model):
     approved = models.BooleanField(default=False)
 
 
+
 # TODO 4: Create a Instructor model 
 
 class Teacher(models.Model):
