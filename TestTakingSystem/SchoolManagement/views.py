@@ -4,6 +4,9 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect
 from SchoolManagement.forms import RegisterForm
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+from lockdown.decorators import lockdown
 
 # Create your views here.
 
@@ -11,7 +14,7 @@ from SchoolManagement.forms import RegisterForm
 
 # Home page for the complete Website 
 def home(request):
-    return render(request,'main\base.html',{})
+    return render(request,'main/base.html',{})
 
 # TODO 2: Code for login
 def profile(request, *args):
@@ -26,7 +29,7 @@ def login(request):
             user = authenticate(username=username, password=raw_password)
             if user is not None: 
                 profile(request, user)
-                return redirect('home')
+                return HttpResponseRedirect(reverse('home'))
             else: 
                 return HttpResponse('<p> User name or password is incorrect. Please try again.</p>')
         else: 
@@ -37,14 +40,15 @@ def login(request):
 
 def register(request):
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
+        form = RegisterForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password')
+            password = form.cleaned_data.get('password1')
+            # user.set_password(password)
             # user = authenticate(username=username, password=raw_password)
             # login(request, user)
-            return redirect('home')
+            return HttpResponseRedirect(reverse('home'))
     else:
         form = RegisterForm()
     return render(request, 'register.html', {'form': form})

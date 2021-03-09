@@ -1,24 +1,11 @@
 {% extends "main/base.html" %}
 {% block title %}Register{% endblock %}
 {% block content %}
-<style>
-    .center {
-      margin: auto;
-      width: 50%;
-      border: 3px solid green;
-      padding: 10px;
-    }
-    .input {
-        display: inline-flex;
-        justify-content: space-between;
-    }
 </style>
-    <div class= 'container text-center' >
+    <div class= 'container' >
 </br>
-      <div class='row justify-content-center'>
-
  <div class='col-8'>
-  <form method="post" class='form-signin'>
+  <form method="post" enctype="multipart/form-data" class='form-signin'>
     {% csrf_token %}
     {% for field in form %}
       <p>
@@ -32,7 +19,6 @@
     {% endfor %}
     <button type="submit" class="btn btn-success">Register</button>
   </form>
-  </div>
   </div>
 </div>
 {% endblock %}
