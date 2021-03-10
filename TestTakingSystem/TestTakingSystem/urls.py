@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url
+from TestTakingSystem import settings
+from django.conf.urls.static import static
 import SchoolManagement.views as SMViews
 
 urlpatterns = [
@@ -24,6 +26,12 @@ urlpatterns = [
     path('', SMViews.home),
     # URL for login
     url(r'^login/$', SMViews.login, name='login'),
-    url(r'^profile/$', SMViews.profile, name='profile'),
-    path('faceid/', SMViews.faceid.as_view(), name ='faceid')    
+    url(r'^register/', SMViews.register, name='register'),
+    url(r'^home/$', SMViews.home, name='home'),
+
+    # TODO 1: Create the URL for login
+    
 ]
+if settings.DEBUG:
+        urlpatterns += static(settings.MEDIA_URL,
+                              document_root=settings.MEDIA_ROOT)
