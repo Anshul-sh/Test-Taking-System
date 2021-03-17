@@ -21,7 +21,10 @@ class Courses(models.Model):
     course_name=models.CharField(max_length=300)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now_add=True)
-    objects=models.Manager()   
+    objects=models.Manager()  
+
+    def __str__(self):
+        return self.course_name
 
 class Subject(models.Model):
     id=models.AutoField(primary_key=True)
@@ -31,8 +34,9 @@ class Subject(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now_add=True)
     objects=models.Manager()
+   
     def __str__(self):
-        return self.name
+        return self.subject_name
 
 
 SEX=(
@@ -83,9 +87,6 @@ class Teacher(models.Model):
         db_table='teacher'
         verbose_name = 'Teacher'
         verbose_name_plural=verbose_name
-
-    def __str__(self):
-        return self.name;
 
 class NotificationStudent(models.Model):
     id = models.AutoField(primary_key=True)

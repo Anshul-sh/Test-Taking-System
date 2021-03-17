@@ -13,10 +13,12 @@ import cv2
 #from SchoolManagement.serializer import ImageSerializer
 from rest_framework.response import Response
 from urllib import request as url_request
+from SchoolManagement import models
 
 from SchoolManagement.forms import RegisterForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from SchoolManagement.models import Student, Paper
 
 def home(request):
     return render(request,'main/base.html',{})
@@ -68,7 +70,7 @@ def home(request):
 class profile(APIView):
     template_name = 'profile.html'
     def get(self, request):
-        queryset = UserManager.get('self')
+        # queryset = UserManager.get('self')
         return HttpResponseRedirect(reverse("student_home"))
 
         # return Response({'profile': queryset})
@@ -76,6 +78,7 @@ class profile(APIView):
 
 def support(request):
     return render(request,'main/base.html',{})
+
 
 def login(request):
     if request.method == 'POST':
@@ -98,3 +101,15 @@ def login(request):
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
 
+def register(request):
+    return render(request,'main/base.html',{})
+
+
+
+def startExam(request):
+    sid = request.GET.get('sid')
+    subject1=request.GET.get('subject')
+
+    student=models.Student.objects.get(id=sid)
+    paper= models.Paper.objects.filter(subject=subject1)
+    return render(request,'exam.html',{'student':student,'paper':paper,'subject':subject1})

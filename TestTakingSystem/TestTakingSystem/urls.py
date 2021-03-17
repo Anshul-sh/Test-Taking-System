@@ -27,11 +27,12 @@ urlpatterns = [
     path('', SMViews.home),
     # URL for login
     url(r'^login/$', SMViews.login, name='login'),
-    # url(r'^register/', SMViews.register, name='register'),
+    url(r'^register/', SMViews.register, name='register'),
     url(r'^home/$', SMViews.home, name='home'),
     url(r'^support/$', SMViews.support, name='support'),
 
     path('student_home', StudentViews.student_home, name="student_home"),
+    url(r'^startExam/$',SMViews.startExam),
 
     # TODO 1: Create the URL for login
     
