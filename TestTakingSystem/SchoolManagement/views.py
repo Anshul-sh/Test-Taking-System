@@ -16,14 +16,35 @@ from urllib import request as url_request
 
 from SchoolManagement.forms import RegisterForm
 from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse_lazy
+
+# import views types
+from django.views.generic.edit import CreateView
+
+
+from django.contrib import messages
 
 def home(request):
     return render(request,'main\\base.html',{})
 
 
-# class registration_view(CreateView):
-    
+class RegistrationView(CreateView):
+    model = UserManager
+    fields = ['email','first_name','last_name','username','password','user_role']
+    template_name = 'register.html'
+    success_url = reverse_lazy('')
+    def form_valid(self, form):    
+        user = form.save(commit=False)
+        role = user.user_role
+        user.save()
+        # Add action to valid form phase
+        if(role == 'Student'):
+            messages.success(self.request, 'Student redirect')
+            return HttpResponseRedirect(self.get_success_url())  
+        elif(role == 'Staff'):
+            return HttpResponseRedirect(self.get_success_url()) 
+
+
 class faceid(APIView):
     #serializer_class = ImageSerializer
     #permission_classes = [AllowAny]

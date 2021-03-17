@@ -24,9 +24,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Homepage inside the School Management System 
     path('', SMViews.home),
-    # URL for login
+    path('register/',SMViews.RegistrationView.as_view(),name= 'register'),
+    #path('userCreater/',)
     url(r'^login/$', SMViews.login, name='login'),
-    # url(r'^register/', SMViews.register, name='register'),
     url(r'^home/$', SMViews.home, name='home'),
 
     # TODO 1: Create the URL for login
