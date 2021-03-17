@@ -69,8 +69,13 @@ class profile(APIView):
     template_name = 'profile.html'
     def get(self, request):
         queryset = UserManager.get('self')
-        return Response({'profile': queryset})
+        return HttpResponseRedirect(reverse("student_home"))
 
+        # return Response({'profile': queryset})
+
+
+def support(request):
+    return render(request,'main/base.html',{})
 
 def login(request):
     if request.method == 'POST':

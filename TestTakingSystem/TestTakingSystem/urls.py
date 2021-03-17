@@ -19,6 +19,7 @@ from django.conf.urls import url
 from TestTakingSystem import settings
 from django.conf.urls.static import static
 import SchoolManagement.views as SMViews
+from SchoolManagement import StudentViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +29,9 @@ urlpatterns = [
     url(r'^login/$', SMViews.login, name='login'),
     url(r'^register/', SMViews.register, name='register'),
     url(r'^home/$', SMViews.home, name='home'),
+    url(r'^support/$', SMViews.support, name='support'),
+
+    path('student_home', StudentViews.student_home, name="student_home"),
 
     # TODO 1: Create the URL for login
     
