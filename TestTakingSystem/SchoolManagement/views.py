@@ -88,17 +88,3 @@ def login(request):
     else:
         return render(request,'login.html') 
 
-def register(request):
-    if request.method == 'POST':
-        form = RegisterForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            # user.set_password(password)
-            # user = authenticate(username=username, password=raw_password)
-            # login(request, user)
-            return HttpResponseRedirect(reverse('home'))
-    else:
-        form = RegisterForm()
-    return render(request, 'register.html', {'form': form})

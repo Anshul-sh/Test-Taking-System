@@ -26,7 +26,7 @@ urlpatterns = [
     path('', SMViews.home),
     # URL for login
     url(r'^login/$', SMViews.login, name='login'),
-    url(r'^register/', SMViews.register, name='register'),
+    # url(r'^register/', SMViews.register, name='register'),
     url(r'^home/$', SMViews.home, name='home'),
 
     # TODO 1: Create the URL for login

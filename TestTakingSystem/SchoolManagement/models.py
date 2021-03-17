@@ -16,9 +16,21 @@ class UserManager(AbstractUser):
     user_role_data = ((1,"HOD"),(2,"Staff"),(3,"Student"))
     user_role = models.CharField(default=1,choices=user_role_data,max_length=10)
 
+class Courses(models.Model):
+    id=models.AutoField(primary_key=True)
+    course_name=models.CharField(max_length=300)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now_add=True)
+    objects=models.Manager()   
+
 class Subject(models.Model):
-    name = models.CharField(max_length=100)
+    id=models.AutoField(primary_key=True)
+    subject_name=models.CharField(max_length=255)
     code = models.IntegerField(default=0,validators=[MaxValueValidator(999), MinValueValidator(100)])
+    staff_id=models.ForeignKey(UserManager,on_delete=models.CASCADE)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now_add=True)
+    objects=models.Manager()
     def __str__(self):
         return self.name
 
@@ -39,7 +51,8 @@ DEPT=(
 class Student(models.Model):
     id=models.AutoField(primary_key=True)
     admin=models.OneToOneField(UserManager,on_delete=models.CASCADE)
-    gender=models.CharField(max_length=255)
+    sex = models.CharField ('Gender', max_length = 6, choices = SEX, default = 'Male')
+    birth = models.DateField ('date of birth')
     profile_pic=models.FileField()
     address=models.TextField()
     course_id=models.ForeignKey(Courses,on_delete=models.DO_NOTHING)
@@ -47,19 +60,24 @@ class Student(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now_add=True)
     fcm_token=models.TextField(default="")
-    objects = models.Manager()
     enrolled_subject = models.ManyToManyField(Subject, related_name='enrolled_subjects')
     approved = models.BooleanField(default=False)
+    objects = models.Manager()
 
 
 # TODO 4: Create a Instructor model 
 
 class Teacher(models.Model):
     id = models.CharField ("Teacher ID", max_length = 20, primary_key = True)
-    name = models.CharField ('Name', max_length = 20)
+    address=models.TextField()
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now_add=True)
+    fcm_token=models.TextField(default="")
     sex = models.CharField ('Gender', max_length = 6, choices = SEX, default = 'Male')
     Dept = models.CharField ('College', max_length = 40, choices = DEPT, default = None)
     birth = models.DateField ('date of birth')
+    approved = models.BooleanField(default=False)
+    objects=models.Manager()
 
     class Meta:
         db_table='teacher'
@@ -69,6 +87,21 @@ class Teacher(models.Model):
     def __str__(self):
         return self.name;
 
+class NotificationStudent(models.Model):
+    id = models.AutoField(primary_key=True)
+    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+    objects = models.Manager()
+
+class NotificationTeacher(models.Model):
+    id = models.AutoField(primary_key=True)
+    staff_id = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+    objects = models.Manager()
 
 class Question(models.Model):
 
