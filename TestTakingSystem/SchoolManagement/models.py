@@ -6,30 +6,15 @@ from django.core.validators import MaxValueValidator,MinValueValidator
 
 # TODO 1: Connect django with mongoDB
 
-# The role is the entity that decides which permissions are to be given to the user.
-class Role(models.Model):
-  '''
-  The Role entries are managed by the system,
-  automatically created via a Django data migration.
-  '''
-  STUDENT = 1
-  TEACHER = 2
-  SECRETARY = 3
-  SUPERVISOR = 4
-  ADMIN = 5
-  ROLE_CHOICES = (
-      (STUDENT, 'student'),
-      (TEACHER, 'teacher'),
-      (ADMIN, 'admin'),
-  )
+class SessionYearModel(models.Model):
+    id=models.AutoField(primary_key=True)
+    session_start_year=models.DateField()
+    session_end_year=models.DateField()
+    object=models.Manager()
 
-  id = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, primary_key=True)
-
-  def __str__(self):
-      return self.id
-#The user have one or more specified roles. For example a student can be a checker and have access to exam papers.
 class UserManager(AbstractUser):
-    role = models.ManyToManyField(Role)
+    user_role_data = ((1,"HOD"),(2,"Staff"),(3,"Student"))
+    user_role = models.CharField(default=1,choices=user_role_data,max_length=10)
 
 class Subject(models.Model):
     name = models.CharField(max_length=100)
@@ -52,18 +37,19 @@ DEPT=(
 # TODO 3: Create a Student model
 
 class Student(models.Model):
-    email = models.EmailField(
-        verbose_name = 'email_address',
-        max_length=255,
-        unique=True,
-    )
-    first_name = models.CharField(max_length=20,blank=False,null=False)
-    last_name = models.CharField(max_length=20,blank=False,null=False)
-    profile_picture = models.ImageField(upload_to='media/',blank=False)
-    # user = models.OneToOneField(UserManager, on_delete=models.CASCADE, primary_key=True)
-    enrolled = models.ManyToManyField(Subject, related_name='enrolled_subjects')
+    id=models.AutoField(primary_key=True)
+    admin=models.OneToOneField(UserManager,on_delete=models.CASCADE)
+    gender=models.CharField(max_length=255)
+    profile_pic=models.FileField()
+    address=models.TextField()
+    course_id=models.ForeignKey(Courses,on_delete=models.DO_NOTHING)
+    session_year_id=models.ForeignKey(SessionYearModel,on_delete=models.CASCADE)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now_add=True)
+    fcm_token=models.TextField(default="")
+    objects = models.Manager()
+    enrolled_subject = models.ManyToManyField(Subject, related_name='enrolled_subjects')
     approved = models.BooleanField(default=False)
-    USERNAME_FIELD = 'email'
 
 
 # TODO 4: Create a Instructor model 
@@ -73,8 +59,6 @@ class Teacher(models.Model):
     name = models.CharField ('Name', max_length = 20)
     sex = models.CharField ('Gender', max_length = 6, choices = SEX, default = 'Male')
     Dept = models.CharField ('College', max_length = 40, choices = DEPT, default = None)
-    email = models.EmailField ('mailbox', default = None)
-    password = models.CharField ('password', max_length = 20, default = '000000')
     birth = models.DateField ('date of birth')
 
     class Meta:
