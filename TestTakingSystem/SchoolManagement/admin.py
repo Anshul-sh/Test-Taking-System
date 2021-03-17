@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import Student, Teacher, Subject, UserManager,Question,Grade,Paper, Courses,SessionYearModel
+from .models import Student, Teacher, Subject, UserManager,Question,Grade,Paper
 # Register your models here.
 
 admin.site.register(Student)

@@ -25,6 +25,7 @@ class Courses(models.Model):
 
     def __str__(self):
         return self.course_name
+    objects=models.Manager()   
 
 class Subject(models.Model):
     id=models.AutoField(primary_key=True)
@@ -87,6 +88,14 @@ class Teacher(models.Model):
         db_table='teacher'
         verbose_name = 'Teacher'
         verbose_name_plural=verbose_name
+
+class NotificationStudent(models.Model):
+    id = models.AutoField(primary_key=True)
+    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+    objects = models.Manager()
 
 class NotificationStudent(models.Model):
     id = models.AutoField(primary_key=True)

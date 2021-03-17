@@ -19,6 +19,13 @@ from SchoolManagement.forms import RegisterForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from SchoolManagement.models import Student, Paper
+from django.urls import reverse_lazy
+
+# import views types
+from django.views.generic.edit import CreateView
+
+
+from django.contrib import messages
 
 def home(request):
     return render(request,'main/base.html',{})
@@ -39,6 +46,35 @@ def home(request):
 #                 f.write(resp.file.read())
 #         img = cv2.imread((str(MEDIA_ROOT)+'\\images\\image.jpg'),1)
 
+class RegistrationView(CreateView):
+    model = UserManager
+    fields = ['email','first_name','last_name','username','password','user_role']
+    template_name = 'register.html'
+    success_url = reverse_lazy('')
+    def form_valid(self, form):    
+        user = form.save(commit=False)
+        role = user.user_role
+        user.save()
+        # Add action to valid form phase
+        if(role == 'Student'):
+            messages.success(self.request, 'Student redirect')
+            return HttpResponseRedirect(self.get_success_url())  
+        elif(role == 'Staff'):
+            return HttpResponseRedirect(self.get_success_url()) 
+
+
+class faceid(APIView):
+    #serializer_class = ImageSerializer
+    #permission_classes = [AllowAny]
+    # def post(self, request):
+    #     loc = '\\images\\stored\\test2.jpg'
+    #     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    #     MEDIA_ROOT =os.path.join(BASE_DIR,'SchoolManagement')
+    #     uri  = request.POST.__getitem__('image')
+    #     with url_request.urlopen(uri) as resp:
+    #         with open((str(MEDIA_ROOT)+'\\images\\image.jpg'), 'wb') as f:
+    #             f.write(resp.file.read())
+    #     img = cv2.imread((str(MEDIA_ROOT)+'\\images\\image.jpg'),1)
 
 #         print(MEDIA_ROOT,loc)
 #         loc=(str(MEDIA_ROOT)+loc)
@@ -100,10 +136,6 @@ def login(request):
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
-
-def register(request):
-    return render(request,'main/base.html',{})
-
 
 
 def startExam(request):
