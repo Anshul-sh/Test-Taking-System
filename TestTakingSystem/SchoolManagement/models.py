@@ -124,12 +124,6 @@ class Paper(models.Model):
     subject = models.CharField ('Subject', max_length = 20, default = '')
     Major = models.CharField ('Applicable for test papers', max_length = 20)
     examtime=models.DateTimeField()
-
-
-    class Meta:
-        db_table='paper'
-        verbose_name = 'Test paper'
-        verbose_name_plural=verbose_name
     
     def __str__(self):
         return self.Major;
@@ -142,8 +136,3 @@ class Grade(models.Model):
 
     def __str__(self):
         return '<%s:%s>'%(self.sid,self.grade);
-
-    class Meta:
-        db_table='grade'
-        verbose_name = 'Achievement'
-        verbose_name_plural=verbose_name
