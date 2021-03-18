@@ -30,21 +30,11 @@ from django.contrib import messages
 def home(request):
     return render(request,'main/base.html',{})
 
+class FaceDetection(APIView):
+    def get(self, request):
+        return render(request, 'face_detection.html')
 
-# class registration_view(CreateView):
-    
-# class faceid(APIView):
-#     #serializer_class = ImageSerializer
-#     #permission_classes = [AllowAny]
-#     def post(self, request):
-#         loc = '\\images\\stored\\test2.jpg'
-#         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-#         MEDIA_ROOT =os.path.join(BASE_DIR,'SchoolManagement')
-#         uri  = request.POST.__getitem__('image')
-#         with url_request.urlopen(uri) as resp:
-#             with open((str(MEDIA_ROOT)+'\\images\\image.jpg'), 'wb') as f:
-#                 f.write(resp.file.read())
-#         img = cv2.imread((str(MEDIA_ROOT)+'\\images\\image.jpg'),1)
+
 
 class RegistrationView(CreateView):
     model = UserManager
@@ -63,7 +53,7 @@ class RegistrationView(CreateView):
             return HttpResponseRedirect(self.get_success_url()) 
 
 
-class faceid(APIView):
+# class faceid(APIView):
     #serializer_class = ImageSerializer
     #permission_classes = [AllowAny]
     # def post(self, request):
