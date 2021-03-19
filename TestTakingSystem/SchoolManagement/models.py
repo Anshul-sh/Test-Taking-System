@@ -56,7 +56,7 @@ DEPT=(
 class Student(models.Model):
     id=models.AutoField(primary_key=True)
     admin=models.OneToOneField(UserManager,on_delete=models.CASCADE)
-    sex = models.CharField ('Gender', max_length = 6, choices = SEX, default = 'Male')
+    gender = models.CharField ('Gender', max_length = 6, choices = SEX, default = 'Male')
     birth = models.DateField ('date of birth')
     profile_pic=models.FileField()
     address=models.TextField()

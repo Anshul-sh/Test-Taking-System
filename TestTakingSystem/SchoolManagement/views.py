@@ -15,8 +15,8 @@ from rest_framework.response import Response
 from urllib import request as url_request
 from SchoolManagement import models
 
-from SchoolManagement.forms import RegisterForm
-from django.http import HttpResponse, HttpResponseRedirect
+from SchoolManagement.forms import StudentRegistrationForm, UserForm
+
 from django.urls import reverse
 from SchoolManagement.models import Student, Paper
 from django.urls import reverse_lazy
@@ -34,63 +34,77 @@ class FaceDetection(APIView):
     def get(self, request):
         return render(request, 'face_detection.html')
 
+def CreateStudent(request):
+    args = {}
+    args['user_form'] = UserForm()
+    args['student_form'] = StudentRegistrationForm()
+    if request.method == 'POST':
+        user_form = UserForm(request.POST)
+        student_form = StudentRegistrationForm(request.POST)
+        if user_form.is_valid():
+            u = user_form.save(commit=False)            
+            if UserManager.objects.filter(username=u.username).exists():
+                args['error_message'] = 'Username already exists.'
+                return render(request,'register.html',args)
+            elif UserManager.objects.filter(email=u.email).exists():
+                args['error_message'] = 'Email already exists.'
+                return render(request,'register.html',args)
+            else:
+                u.role = 'Student'
+                u.save()
+                user = UserManager.objects.get(username=u.username)
+                if student_form.is_valid():
+                    student = student_form.save(commit=False)
+                    student.admin = user
+                    student.save()
+                    return HttpResponseRedirect('User Created Successfully.')
+                else: 
+                    print(student_form.errors)
+        else: 
+            print(user_form.errors)
+    
+        args.update(csrf(request))
+    return render(request,'register.html',args)
+        
 
-
-class RegistrationView(CreateView):
-    model = UserManager
-    fields = ['email','first_name','last_name','username','password','user_role']
-    template_name = 'register.html'
-    success_url = reverse_lazy('')
-    def form_valid(self, form):    
-        user = form.save(commit=False)
-        role = user.user_role
-        user.save()
-        # Add action to valid form phase
-        if(role == 'Student'):
-            messages.success(self.request, 'Student redirect')
-            return HttpResponseRedirect(self.get_success_url())  
-        elif(role == 'Staff'):
-            return HttpResponseRedirect(self.get_success_url()) 
-
-
-# class faceid(APIView):
+class faceid(APIView):
     #serializer_class = ImageSerializer
     #permission_classes = [AllowAny]
-    # def post(self, request):
-    #     loc = '\\images\\stored\\test2.jpg'
-    #     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    #     MEDIA_ROOT =os.path.join(BASE_DIR,'SchoolManagement')
-    #     uri  = request.POST.__getitem__('image')
-    #     with url_request.urlopen(uri) as resp:
-    #         with open((str(MEDIA_ROOT)+'\\images\\image.jpg'), 'wb') as f:
-    #             f.write(resp.file.read())
-    #     img = cv2.imread((str(MEDIA_ROOT)+'\\images\\image.jpg'),1)
+    def post(self, request):
+        loc = '\\images\\stored\\test2.jpg'
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        MEDIA_ROOT =os.path.join(BASE_DIR,'SchoolManagement')
+        uri  = request.POST.__getitem__('image')
+        with url_request.urlopen(uri) as resp:
+            with open((str(MEDIA_ROOT)+'\\images\\image.jpg'), 'wb') as f:
+                f.write(resp.file.read())
+        img = cv2.imread((str(MEDIA_ROOT)+'\\images\\image.jpg'),1)
 
-#         print(MEDIA_ROOT,loc)
-#         loc=(str(MEDIA_ROOT)+loc)
-#         print(loc)
+        print(MEDIA_ROOT,loc)
+        loc=(str(MEDIA_ROOT)+loc)
+        print(loc)
 
-#         print("/images/stored/test.jpg")
-#         face_1_image = face_recognition.load_image_file(loc)
-#         face_1_face_encoding = face_recognition.face_encodings(face_1_image)[0]
+        print("/images/stored/test.jpg")
+        face_1_image = face_recognition.load_image_file(loc)
+        face_1_face_encoding = face_recognition.face_encodings(face_1_image)[0]
 
 
-#         small_frame = cv2.resize(img, (0, 0), fx=0.25, fy=0.25)
-#         rgb_small_frame = small_frame[:, :, ::-1]
+        small_frame = cv2.resize(img, (0, 0), fx=0.25, fy=0.25)
+        rgb_small_frame = small_frame[:, :, ::-1]
 
-#         face_locations = face_recognition.face_locations(rgb_small_frame)
-#         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        face_locations = face_recognition.face_locations(rgb_small_frame)
+        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
-#         check=face_recognition.compare_faces(face_1_face_encoding, face_encodings)
+        check=face_recognition.compare_faces(face_1_face_encoding, face_encodings)
 
-#         print(check)
-#         if check[0]:
-#                 return True
+        print(check)
+        if check[0]:
+                return True
         
-#         else :
-#                 return False
-#     def get(self, request):
-#         return render(request ,'faceid.html')
+        else :
+                return False
+    def get(self, request):
+        return render(request ,'faceid.html')
 
 @login_required
 class profile(APIView):
