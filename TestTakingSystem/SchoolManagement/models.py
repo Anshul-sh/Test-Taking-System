@@ -13,7 +13,8 @@ class SessionYearModel(models.Model):
     object=models.Manager()
 
 class UserManager(AbstractUser):
-    user_role_data = ((1,"Admin"),(2,"Staff"),(3,"Student"))
+    # user_role_data = ((1,"Admin"),(2,"Staff"),(3,"Student"))
+    user_role_data = (('Staff',"Staff"),("Student","Student"))
     user_role = models.CharField(default=1,choices=user_role_data,max_length=10)
 
 class Courses(models.Model):
@@ -56,7 +57,7 @@ DEPT=(
 class Student(models.Model):
     id=models.AutoField(primary_key=True)
     admin=models.OneToOneField(UserManager,on_delete=models.CASCADE)
-    sex = models.CharField ('Gender', max_length = 6, choices = SEX, default = 'Male')
+    gender = models.CharField ('Gender', max_length = 6, choices = SEX, default = 'Male')
     birth = models.DateField ('date of birth')
     profile_pic=models.FileField()
     address=models.TextField()
@@ -96,7 +97,6 @@ class NotificationStudent(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()
-
 
 class NotificationTeacher(models.Model):
     id = models.AutoField(primary_key=True)

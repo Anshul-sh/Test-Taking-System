@@ -25,8 +25,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Homepage inside the School Management System 
     path('', SMViews.home),
-    path('register/',SMViews.RegistrationView.as_view(),name= 'register'),
-    #path('userCreater/',)
+    path('face_detection/',SMViews.FaceDetection.as_view(),name = 'face_detection'),
+    path('student_registration/',SMViews.CreateStudent ,name = 'register'),
+    #path('<slug:pk>/student_registration/', SMViews.StudentRegistration.as_view(), name="student_registration"),
     url(r'^login/$', SMViews.login, name='login'),
     url(r'^home/$', SMViews.home, name='home'),
     url(r'^support/$', SMViews.support, name='support'),

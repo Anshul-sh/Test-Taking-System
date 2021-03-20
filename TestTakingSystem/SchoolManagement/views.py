@@ -15,8 +15,8 @@ from rest_framework.response import Response
 from urllib import request as url_request
 from SchoolManagement import models
 
-from SchoolManagement.forms import RegisterForm
-from django.http import HttpResponse, HttpResponseRedirect
+from SchoolManagement.forms import StudentRegistrationForm, UserForm
+
 from django.urls import reverse
 from SchoolManagement.models import Student, Paper
 from django.urls import reverse_lazy
@@ -30,8 +30,38 @@ from django.contrib import messages
 def home(request):
     return render(request,'main/base.html',{})
 
+class FaceDetection(APIView):
+    def get(self, request):
+        return render(request, 'face_detection.html')
 
-# class registration_view(CreateView):
+def CreateStudent(request):
+    args = {}
+    args['user_form'] = UserForm()
+    args['student_form'] = StudentRegistrationForm()
+    if request.method == 'POST':
+        user_form = UserForm(request.POST)
+        student_form = StudentRegistrationForm(request.POST)
+        if user_form.is_valid():
+            u = user_form.save(commit=False)            
+            if UserManager.objects.filter(username=u.username).exists():
+                args['error_message'] = 'Username already exists.'
+                return render(request,'register.html',args)
+            elif UserManager.objects.filter(email=u.email).exists():
+                args['error_message'] = 'Email already exists.'
+                return render(request,'register.html',args)
+            else:
+                u.role = 'Student'
+                u.save()
+                user = UserManager.objects.get(username=u.username)
+                if student_form.is_valid():
+                    student = student_form.save(commit=False)
+                    student.admin = user
+                    student.save()
+                    return HttpResponseRedirect('User Created Successfully.')
+                else: 
+                    print(student_form.errors)
+        else: 
+            print(user_form.errors)
     
 # class faceid(APIView):
 #     #serializer_class = ImageSerializer
@@ -61,7 +91,9 @@ class RegistrationView(CreateView):
             return HttpResponseRedirect(self.get_success_url())  
         elif(role == "Staff"):
             return HttpResponseRedirect(self.get_success_url()) 
-
+        args.update(csrf(request))
+    return render(request,'register.html',args)
+        
 
 # class faceid(APIView):
     #serializer_class = ImageSerializer
@@ -76,31 +108,31 @@ class RegistrationView(CreateView):
     #             f.write(resp.file.read())
     #     img = cv2.imread((str(MEDIA_ROOT)+'\\images\\image.jpg'),1)
 
-#         print(MEDIA_ROOT,loc)
-#         loc=(str(MEDIA_ROOT)+loc)
-#         print(loc)
+    #     print(MEDIA_ROOT,loc)
+    #     loc=(str(MEDIA_ROOT)+loc)
+    #     print(loc)
 
-#         print("/images/stored/test.jpg")
-#         face_1_image = face_recognition.load_image_file(loc)
-#         face_1_face_encoding = face_recognition.face_encodings(face_1_image)[0]
+    #     print("/images/stored/test.jpg")
+    #     face_1_image = face_recognition.load_image_file(loc)
+    #     face_1_face_encoding = face_recognition.face_encodings(face_1_image)[0]
 
 
-#         small_frame = cv2.resize(img, (0, 0), fx=0.25, fy=0.25)
-#         rgb_small_frame = small_frame[:, :, ::-1]
+    #     small_frame = cv2.resize(img, (0, 0), fx=0.25, fy=0.25)
+    #     rgb_small_frame = small_frame[:, :, ::-1]
 
-#         face_locations = face_recognition.face_locations(rgb_small_frame)
-#         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+    #     face_locations = face_recognition.face_locations(rgb_small_frame)
+    #     face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
-#         check=face_recognition.compare_faces(face_1_face_encoding, face_encodings)
+    #     check=face_recognition.compare_faces(face_1_face_encoding, face_encodings)
 
-#         print(check)
-#         if check[0]:
-#                 return True
+    #     print(check)
+    #     if check[0]:
+    #             return True
         
-#         else :
-#                 return False
-#     def get(self, request):
-#         return render(request ,'faceid.html')
+    #     else :
+    #             return False
+    # def get(self, request):
+    #     return render(request ,'faceid.html')
 
 
 @login_required

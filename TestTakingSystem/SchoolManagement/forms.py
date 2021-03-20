@@ -1,24 +1,15 @@
-from django import forms
+from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
-from SchoolManagement.models import Student
+from SchoolManagement.models import Student, UserManager
 
-class RegisterForm(UserCreationForm):
- def __init__(self, *args, **kwargs):
-  super(RegisterForm, self).__init__(*args, **kwargs)
-  # do not require password confirmation
-  # del self.fields['password2']
+class UserForm(ModelForm):
+    class Meta:
+        model = UserManager
+        fields = ['email','username','first_name','last_name','password']
 
-#  class Meta:
-#   model = Student
-#   fields = ['email', 'first_name', 'last_name','enrolled','profile_picture']
-#   widgets = {
-#    'enrolled': forms.CheckboxSelectMultiple,
-#   }
-#   labels = {
-#     'email': 'email',
-#    'first_name': 'First Name',
-#    'last_name': 'Last Name',
-#    'enrolled':'Enrolled In',
-#    'profile_picture': 'profile picture'
-#   }
-  
+class StudentRegistrationForm(ModelForm):
+    class Meta:
+        model = Student
+        fields = ['address', 'gender', 'course_id', 'session_year_id', 'birth','profile_pic']
+
+
