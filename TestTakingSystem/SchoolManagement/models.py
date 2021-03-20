@@ -1,41 +1,50 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator,MinValueValidator
-
+import os
 # Create your models here.
 
 # TODO 1: Connect django with mongoDB
 
-# The role is the entity that decides which permissions are to be given to the user.
-class Role(models.Model):
-  '''
-  The Role entries are managed by the system,
-  automatically created via a Django data migration.
-  '''
-  STUDENT = 1
-  TEACHER = 2
-  SECRETARY = 3
-  SUPERVISOR = 4
-  ADMIN = 5
-  ROLE_CHOICES = (
-      (STUDENT, 'student'),
-      (TEACHER, 'teacher'),
-      (ADMIN, 'admin'),
-  )
+class SessionYearModel(models.Model):
+    id=models.AutoField(primary_key=True)
+    session_start_year=models.DateField()
+    session_end_year=models.DateField()
+    object=models.Manager()
 
-  id = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, primary_key=True)
-
-  def __str__(self):
-      return self.id
-#The user have one or more specified roles. For example a student can be a checker and have access to exam papers.
 class UserManager(AbstractUser):
-    role = models.ManyToManyField(Role)
+    # user_role_data = ((1,"Admin"),(2,"Staff"),(3,"Student"))
+    user_role_data = (('Staff',"Staff"),("Student","Student"))
+    user_role = models.CharField(default=1,choices=user_role_data,max_length=10)
+
+
+def content_file_name(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (instance.admin.username,ext)
+    return os.path.join('uploads', filename)
+
+class Courses(models.Model):
+    id=models.AutoField(primary_key=True)
+    course_name=models.CharField(max_length=300)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now_add=True)
+    objects=models.Manager()  
+
+    def __str__(self):
+        return self.course_name
+    objects=models.Manager()   
 
 class Subject(models.Model):
-    name = models.CharField(max_length=100)
+    id=models.AutoField(primary_key=True)
+    subject_name=models.CharField(max_length=255)
     code = models.IntegerField(default=0,validators=[MaxValueValidator(999), MinValueValidator(100)])
+    staff_id=models.ForeignKey(UserManager,on_delete=models.CASCADE)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now_add=True)
+    objects=models.Manager()
+   
     def __str__(self):
-        return self.name
+        return self.subject_name
 
 
 SEX=(
@@ -52,39 +61,56 @@ DEPT=(
 # TODO 3: Create a Student model
 
 class Student(models.Model):
-    email = models.EmailField(
-        verbose_name = 'email_address',
-        max_length=255,
-        unique=True,
-    )
-    first_name = models.CharField(max_length=20,blank=False,null=False)
-    last_name = models.CharField(max_length=20,blank=False,null=False)
-    profile_picture = models.ImageField(upload_to='media/',blank=False)
-    # user = models.OneToOneField(UserManager, on_delete=models.CASCADE, primary_key=True)
-    enrolled = models.ManyToManyField(Subject, related_name='enrolled_subjects')
+    id=models.AutoField(primary_key=True)
+    admin=models.OneToOneField(UserManager,on_delete=models.CASCADE)
+    gender = models.CharField ('Gender', max_length = 6, choices = SEX, default = 'Male')
+    birth = models.DateField ('date of birth')
+    profile_pic=models.FileField(upload_to=content_file_name)
+    address=models.TextField()
+    course_id=models.ForeignKey(Courses,on_delete=models.DO_NOTHING)
+    session_year_id=models.ForeignKey(SessionYearModel,on_delete=models.CASCADE)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now_add=True)
+    fcm_token=models.TextField(default="")
+    enrolled_subject = models.ManyToManyField(Subject, related_name='enrolled_subjects')
     approved = models.BooleanField(default=False)
-    USERNAME_FIELD = 'email'
+    objects = models.Manager()
 
 
 # TODO 4: Create a Instructor model 
 
 class Teacher(models.Model):
     id = models.CharField ("Teacher ID", max_length = 20, primary_key = True)
-    name = models.CharField ('Name', max_length = 20)
+    address=models.TextField()
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now_add=True)
+    fcm_token=models.TextField(default="")
     sex = models.CharField ('Gender', max_length = 6, choices = SEX, default = 'Male')
     Dept = models.CharField ('College', max_length = 40, choices = DEPT, default = None)
-    email = models.EmailField ('mailbox', default = None)
-    password = models.CharField ('password', max_length = 20, default = '000000')
     birth = models.DateField ('date of birth')
+    approved = models.BooleanField(default=False)
+    objects=models.Manager()
 
     class Meta:
         db_table='teacher'
         verbose_name = 'Teacher'
         verbose_name_plural=verbose_name
 
-    def __str__(self):
-        return self.name;
+class NotificationStudent(models.Model):
+    id = models.AutoField(primary_key=True)
+    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+    objects = models.Manager()
 
+class NotificationTeacher(models.Model):
+    id = models.AutoField(primary_key=True)
+    staff_id = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+    objects = models.Manager()
 
 class Question(models.Model):
 
@@ -116,7 +142,7 @@ class Question(models.Model):
         verbose_name_plural=verbose_name
 
     def __str__(self):
-        return '<%s:%s>'%(self.subject,self.title);
+        return '<%s:%s>'%(self.subject,self.title)
 
 class Paper(models.Model):
     pid = models.ManyToManyField (Question) #many to many
@@ -132,7 +158,7 @@ class Paper(models.Model):
         verbose_name_plural=verbose_name
     
     def __str__(self):
-        return self.Major;
+        return self.Major
 
 
 class Grade(models.Model):
@@ -141,7 +167,7 @@ class Grade(models.Model):
     grade=models.IntegerField()
 
     def __str__(self):
-        return '<%s:%s>'%(self.sid,self.grade);
+        return '<%s:%s>'%(self.sid,self.grade)
 
     class Meta:
         db_table='grade'

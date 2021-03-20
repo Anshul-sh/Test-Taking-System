@@ -19,15 +19,22 @@ from django.conf.urls import url
 from TestTakingSystem import settings
 from django.conf.urls.static import static
 import SchoolManagement.views as SMViews
+from SchoolManagement import StudentViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Homepage inside the School Management System 
     path('', SMViews.home),
-    # URL for login
-    url(r'^login/$', SMViews.login, name='login'),
-    url(r'^register/', SMViews.register, name='register'),
+    path('face_detection/',SMViews.FaceDetection.as_view(),name = 'face_detection'),
+    path('student_registration/',SMViews.CreateStudent ,name = 'register'),
+    #path('<slug:pk>/student_registration/', SMViews.StudentRegistration.as_view(), name="student_registration"),
+    path('login/', SMViews.login, name='login'),
+    path('profile/',SMViews.Profile.as_view(),name='profile'),
     url(r'^home/$', SMViews.home, name='home'),
+    url(r'^support/$', SMViews.support, name='support'),
+
+    path('student_home', StudentViews.student_home, name="student_home"),
+    url(r'^startExam/$',SMViews.startExam),
 
     # TODO 1: Create the URL for login
     

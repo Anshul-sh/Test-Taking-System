@@ -7,7 +7,17 @@
  <div class='col-8'>
   <form method="post" enctype="multipart/form-data" class='form-signin'>
     {% csrf_token %}
-    {% for field in form %}
+    {% for field in user_form %}
+      <p>
+        {{ field.label_tag }}</br>
+         {{ field }}
+        {% for error in field.errors %}
+        {{field}}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </p>
+    {% endfor %}
+    {% for field in student_form %}
       <p>
         {{ field.label_tag }}</br>
          {{ field }}
