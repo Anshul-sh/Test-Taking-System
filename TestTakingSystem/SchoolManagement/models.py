@@ -13,7 +13,7 @@ class SessionYearModel(models.Model):
     object=models.Manager()
 
 class UserManager(AbstractUser):
-    user_role_data = ((1,"HOD"),(2,"Staff"),(3,"Student"))
+    user_role_data = ((1,"Admin"),(2,"Staff"),(3,"Student"))
     user_role = models.CharField(default=1,choices=user_role_data,max_length=10)
 
 class Courses(models.Model):
@@ -97,13 +97,6 @@ class NotificationStudent(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()
 
-class NotificationStudent(models.Model):
-    id = models.AutoField(primary_key=True)
-    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
-    message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
-    objects = models.Manager()
 
 class NotificationTeacher(models.Model):
     id = models.AutoField(primary_key=True)

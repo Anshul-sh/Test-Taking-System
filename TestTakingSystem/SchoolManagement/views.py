@@ -56,14 +56,14 @@ class RegistrationView(CreateView):
         role = user.user_role
         user.save()
         # Add action to valid form phase
-        if(role == 'Student'):
+        if(role == "Student"):
             messages.success(self.request, 'Student redirect')
             return HttpResponseRedirect(self.get_success_url())  
-        elif(role == 'Staff'):
+        elif(role == "Staff"):
             return HttpResponseRedirect(self.get_success_url()) 
 
 
-class faceid(APIView):
+# class faceid(APIView):
     #serializer_class = ImageSerializer
     #permission_classes = [AllowAny]
     # def post(self, request):
@@ -102,6 +102,7 @@ class faceid(APIView):
 #     def get(self, request):
 #         return render(request ,'faceid.html')
 
+
 @login_required
 class profile(APIView):
     template_name = 'profile.html'
@@ -113,7 +114,7 @@ class profile(APIView):
 
 
 def support(request):
-    return render(request,'main/base.html',{})
+    return render(request,'support.html',{})
 
 
 def login(request):
@@ -139,9 +140,12 @@ def login(request):
 
 
 def startExam(request):
-    sid = request.GET.get('sid')
-    subject1=request.GET.get('subject')
+    return render(request,'exam.html')
+    
+    
+    # sid = request.GET.get('sid')
+    # subject1=request.GET.get('subject')
 
-    student=models.Student.objects.get(id=sid)
-    paper= models.Paper.objects.filter(subject=subject1)
-    return render(request,'exam.html',{'student':student,'paper':paper,'subject':subject1})
+    # student=models.Student.objects.get(id=sid)
+    # paper= models.Paper.objects.filter(subject=subject1)
+    # return render(request,'exam.html',{'student':'student','paper':'paper','subject':'subject1'})
