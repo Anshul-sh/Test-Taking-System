@@ -3,14 +3,15 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required 
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 import os
 from django.urls import path, include
 from SchoolManagement.EmailBackEnd import EmailBackEnd
 from django.template.context_processors import csrf
-# import face_recognition
+import face_recognition
 import cv2 
 #from SchoolManagement.serializer import ImageSerializer
 from rest_framework.response import Response
@@ -61,8 +62,8 @@ def CreateStudent(request):
                     student = student_form.save(commit=False)
                     student.admin = user
                     student.save()
-                    login()
-                    return 
+                    auth_login(request, user)
+                    return redirect('face_id')
                 else: 
                     print(student_form.errors)
         else: 
@@ -71,12 +72,11 @@ def CreateStudent(request):
         args.update(csrf(request))
     return render(request,'register.html',args)
         
-
-class faceid(View):
-    #serializer_class = ImageSerializer
-    #permission_classes = [AllowAny]
+@method_decorator(csrf_exempt, name='dispatch')
+class FaceId(View):
     def post(self, request):
-        loc = '\\images\\stored\\test2.jpg'
+        student_obj=Student.objects.get(admin=request.user.id)
+        loc = student_obj.profile_pic.path
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         MEDIA_ROOT =os.path.join(BASE_DIR,'SchoolManagement')
         uri  = request.POST.__getitem__('image')
@@ -84,30 +84,18 @@ class faceid(View):
             with open((str(MEDIA_ROOT)+'\\images\\image.jpg'), 'wb') as f:
                 f.write(resp.file.read())
         img = cv2.imread((str(MEDIA_ROOT)+'\\images\\image.jpg'),1)
-
-        print(MEDIA_ROOT,loc)
-        loc=(str(MEDIA_ROOT)+loc)
-        print(loc)
-
-        print("/images/stored/test.jpg")
         face_1_image = face_recognition.load_image_file(loc)
         face_1_face_encoding = face_recognition.face_encodings(face_1_image)[0]
-
-
         small_frame = cv2.resize(img, (0, 0), fx=0.25, fy=0.25)
         rgb_small_frame = small_frame[:, :, ::-1]
-
         face_locations = face_recognition.face_locations(rgb_small_frame)
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
-
         check=face_recognition.compare_faces(face_1_face_encoding, face_encodings)
-
-        print(check)
         if check[0]:
-                return True
+                return redirect('profile')
         
         else :
-                return False
+                return redirect('login')
     def get(self, request):
         return render(request ,'faceid.html')
 
@@ -116,8 +104,6 @@ class Profile(View):
     def get(self, request):
         student_obj=Student.objects.get(admin=request.user.id)
         return render(request,"profile.html",{'user':request.user,'student': student_obj})
-
-
 
 def support(request):
     return render(request,'main/base.html',{})
@@ -134,7 +120,7 @@ def login(request):
             user = EmailBackEnd.authenticate(request, username=username, password=raw_password)
             if user is not None:
                 auth_login(request, user)
-                return redirect('profile')
+                return redirect('face_id')
             else: 
                 return HttpResponse('<p> User name or password is incorrect. Please try again.</p>')
         else:
