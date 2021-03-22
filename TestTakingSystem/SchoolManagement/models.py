@@ -81,6 +81,7 @@ class Student(models.Model):
 
 class Teacher(models.Model):
     id = models.CharField ("Teacher ID", max_length = 20, primary_key = True)
+    name=models.CharField(max_length=255, default='test')
     address=models.TextField()
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now_add=True)
@@ -126,8 +127,8 @@ class Question(models.Model):
         ('3','difficult'),
     }
     id = models.AutoField(primary_key=True)
-    subject = models.CharField ('Subject', max_length = 20)
-    title = models.TextField (' ')
+    subject = models.OneToOneField(Subject,on_delete=models.CASCADE)
+    title = models.TextField ('question ')
     optionA = models.CharField ('Aoption', max_length = 30)
     optionB = models.CharField ('Boption', max_length = 30)
     optionC = models.CharField ('Coption', max_length = 30)
@@ -147,9 +148,10 @@ class Question(models.Model):
 class Paper(models.Model):
     pid = models.ManyToManyField (Question) #many to many
     Tid = models.ForeignKey (Teacher, on_delete = models.CASCADE) #Add foreign key
-    subject = models.CharField ('Subject', max_length = 20, default = '')
+    subject = models.OneToOneField(Subject,on_delete=models.CASCADE)
     Major = models.CharField ('Applicable for test papers', max_length = 20)
     examtime=models.DateTimeField()
+    objects = models.Manager()
 
 
     class Meta:

@@ -1,8 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
-from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required 
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -13,27 +12,17 @@ from django.urls import path, include
 from SchoolManagement.EmailBackEnd import EmailBackEnd
 from django.template.context_processors import csrf
 import cv2 
-#from SchoolManagement.serializer import ImageSerializer
 from rest_framework.response import Response
 from urllib import request as url_request
+from SchoolManagement.forms import StudentRegistrationForm, UserForm,LoginForm
 from SchoolManagement import models
-
-from SchoolManagement.forms import StudentRegistrationForm, UserForm
-
 from django.urls import reverse
-from SchoolManagement.models import Student, Paper
+from SchoolManagement.models import Student, Paper,UserManager
 from django.contrib.auth.hashers import make_password
-
-from SchoolManagement.forms import StudentRegistrationForm, UserForm, LoginForm
-
-from django.urls import reverse
-from SchoolManagement.models import Student, Paper, UserManager
-from django.urls import reverse_lazy
+from django.urls import reverse,reverse_lazy
 
 # import views types
 from django.views.generic.edit import CreateView
-
-
 from django.contrib import messages
 
 def home(request):
@@ -174,7 +163,7 @@ class FaceId(View):
     def get(self, request):
         return render(request ,'faceid.html')
 
-@method_decorator(login_required,name='dispatch')
+# @method_decorator(login_required,name='dispatch')
 class Profile(View):
     def get(self, request):
         # queryset = UserManager.get('self')
@@ -185,11 +174,6 @@ class Profile(View):
 
 def support(request):
     return render(request,'support.html',{})
-        # student_obj=Student.objects.get(admin=request.user.id)
-        # return render(request,"profile.html",{'user':request.user,'student': student_obj})
-
-def support(request):
-    return render(request,'main/base.html',{})
 
 def login(request):
     if request.method == 'POST':
@@ -211,18 +195,6 @@ def login(request):
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
-
-
-def startExam(request):
-    return render(request,'exam.html')
-    
-    
-    # sid = request.GET.get('sid')
-    # subject1=request.GET.get('subject')
-
-    # student=models.Student.objects.get(id=sid)
-    # paper= models.Paper.objects.filter(subject=subject1)
-    # return render(request,'exam.html',{'student':'student','paper':'paper','subject':'subject1'})
 
 def login(request):
     if request.method == 'POST':
@@ -250,6 +222,6 @@ def startExam(request):
     sid = request.GET.get('sid')
     subject1=request.GET.get('subject')
 
-    student=models.Student.objects.get(id=sid)
+    # student=models.Student.objects.get(id=sid)
     paper= models.Paper.objects.filter(subject=subject1)
-    return render(request,'exam.html',{'student':student,'paper':paper,'subject':subject1})
+    return render(request,'exam.html',{'student':'student','paper':paper,'subject':subject1})
