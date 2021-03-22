@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator,MinValueValidator
-
+import os
 # Create your models here.
 
 # TODO 1: Connect django with mongoDB
@@ -16,6 +16,12 @@ class UserManager(AbstractUser):
     # user_role_data = ((1,"Admin"),(2,"Staff"),(3,"Student"))
     user_role_data = (('Staff',"Staff"),("Student","Student"))
     user_role = models.CharField(default=1,choices=user_role_data,max_length=10)
+
+
+def content_file_name(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (instance.admin.username,ext)
+    return os.path.join('uploads', filename)
 
 class Courses(models.Model):
     id=models.AutoField(primary_key=True)
@@ -59,7 +65,7 @@ class Student(models.Model):
     admin=models.OneToOneField(UserManager,on_delete=models.CASCADE)
     gender = models.CharField ('Gender', max_length = 6, choices = SEX, default = 'Male')
     birth = models.DateField ('date of birth')
-    profile_pic=models.FileField()
+    profile_pic=models.FileField(upload_to=content_file_name)
     address=models.TextField()
     course_id=models.ForeignKey(Courses,on_delete=models.DO_NOTHING)
     session_year_id=models.ForeignKey(SessionYearModel,on_delete=models.CASCADE)
@@ -136,7 +142,7 @@ class Question(models.Model):
         verbose_name_plural=verbose_name
 
     def __str__(self):
-        return '<%s:%s>'%(self.subject,self.title);
+        return '<%s:%s>'%(self.subject,self.title)
 
 class Paper(models.Model):
     pid = models.ManyToManyField (Question) #many to many
@@ -152,7 +158,7 @@ class Paper(models.Model):
         verbose_name_plural=verbose_name
     
     def __str__(self):
-        return self.Major;
+        return self.Major
 
 
 class Grade(models.Model):
@@ -161,7 +167,7 @@ class Grade(models.Model):
     grade=models.IntegerField()
 
     def __str__(self):
-        return '<%s:%s>'%(self.sid,self.grade);
+        return '<%s:%s>'%(self.sid,self.grade)
 
     class Meta:
         db_table='grade'

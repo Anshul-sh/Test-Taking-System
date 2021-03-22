@@ -29,6 +29,9 @@ urlpatterns = [
     path('student_registration/',SMViews.CreateStudent ,name = 'register'),
     #path('<slug:pk>/student_registration/', SMViews.StudentRegistration.as_view(), name="student_registration"),
     url(r'^login/$', SMViews.login, name='login'),
+    path('login/', SMViews.login, name='login'),
+    path('face_id/', SMViews.FaceId.as_view(),name='face_id'),
+    path('profile/',SMViews.Profile.as_view(),name='profile'),
     url(r'^home/$', SMViews.home, name='home'),
     url(r'^support/$', SMViews.support, name='support'),
 
