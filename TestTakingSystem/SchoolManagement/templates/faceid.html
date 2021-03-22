@@ -28,7 +28,7 @@
 				$.post('', 
 				{ 'image': canvas.toDataURL() }, 
 				function(data, status){ 
-					alert("Image send status" + status);
+					alert("Image send status " + status);
 					var newURL = window.location.protocol + "//" + window.location.host + "/"+'profile'+'/'
 					window.location.href = newURL;
 				}); 

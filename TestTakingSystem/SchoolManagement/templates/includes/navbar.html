@@ -11,7 +11,11 @@
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav navbar-right">
           <li><a href="{% url 'register' %}">REGISTER</a></li>
+          {% if request.user.is_authenticated %}
+          <li><a href="{% url 'logout' %}">LOGOUT</a></li>
+          {% else %}
           <li><a href="{% url 'login' %}">LOGIN</a></li>
+          {% endif %}
           <li><a href="{% url 'support' %}">SUPPORT</a></li>
         </ul>
       </div>

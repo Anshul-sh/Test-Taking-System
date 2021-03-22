@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required 
@@ -105,9 +105,9 @@ class Profile(View):
         student_obj=Student.objects.get(admin=request.user.id)
         return render(request,"profile.html",{'user':request.user,'student': student_obj})
 
-def support(request):
-    return render(request,'main/base.html',{})
-
+def userlogout(request):
+    logout(request)
+    return render(request,'login.html')
 
 def login(request):
     if request.method == 'POST':
@@ -129,12 +129,6 @@ def login(request):
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
+def support(request):
+    return render(request,'home')
 
-
-def startExam(request):
-    sid = request.GET.get('sid')
-    subject1=request.GET.get('subject')
-
-    student=models.Student.objects.get(id=sid)
-    paper= models.Paper.objects.filter(subject=subject1)
-    return render(request,'exam.html',{'student':student,'paper':paper,'subject':subject1})

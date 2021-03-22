@@ -31,10 +31,11 @@ urlpatterns = [
     path('login/', SMViews.login, name='login'),
     path('face_id/', SMViews.FaceId.as_view(),name='face_id'),
     path('profile/',SMViews.Profile.as_view(),name='profile'),
-    url(r'^home/$', SMViews.home, name='home'),
+    path('',SMViews.home,name='home')
+    path('logout/', SMViews.userlogout,name='logout')
     url(r'^support/$', SMViews.support, name='support'),
 
-    path('student_home', StudentViews.student_home, name="student_home"),
+    path('student_home/', StudentViews.student_home, name="student_home"),
     url(r'^startExam/$',SMViews.startExam),
 
     # TODO 1: Create the URL for login
