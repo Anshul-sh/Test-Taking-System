@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
+from django.shortcuts import redirect
 from django.http import HttpResponse
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,logout
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required 
 from django.views.decorators.csrf import csrf_exempt
@@ -20,6 +21,7 @@ from django.urls import reverse
 from SchoolManagement.models import Student, Paper,UserManager
 from django.contrib.auth.hashers import make_password
 from django.urls import reverse,reverse_lazy
+from django.http import HttpResponseRedirect
 
 # import views types
 from django.views.generic.edit import CreateView
@@ -63,6 +65,8 @@ def CreateStudent(request):
                     print(student_form.errors)
         else: 
             print(user_form.errors)
+    return render(request,'register.html',args)
+
     
 # class faceid(APIView):
 #     #serializer_class = ImageSerializer
@@ -163,7 +167,7 @@ class FaceId(View):
     def get(self, request):
         return render(request ,'faceid.html')
 
-# @method_decorator(login_required,name='dispatch')
+@method_decorator(login_required,name='dispatch')
 class Profile(View):
     def get(self, request):
         # queryset = UserManager.get('self')
@@ -177,27 +181,6 @@ def support(request):
 
 def login(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request = request, data = request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=raw_password)
-            if user is not None:
-                 return profile(request)
-            
-            if user is not None: 
-                profile(request, user)
-
-            else: 
-                return HttpResponse('<p> User name or password is incorrect. Please try again.</p>')
-        else: 
-            return HttpResponse('<p> User name or password is incorrect. Please try again.</p>')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'login.html', {'form': form})
-
-def login(request):
-    if request.method == 'POST':
         form = LoginForm(data = request.POST  )
         if form.is_valid():
             username = form.cleaned_data.get('username')
@@ -207,7 +190,9 @@ def login(request):
             user = EmailBackEnd.authenticate(request, username=username, password=raw_password)
             if user is not None:
                 auth_login(request, user)
-                return redirect('face_id')
+                # becoz i can't run face api
+                return HttpResponseRedirect(reverse("student_home"))
+                # return redirect('face_id')
             else: 
                 return HttpResponse('<p> User name or password is incorrect. Please try again.</p>')
         else:
@@ -225,3 +210,8 @@ def startExam(request):
     # student=models.Student.objects.get(id=sid)
     paper= models.Paper.objects.filter(subject=subject1)
     return render(request,'exam.html',{'student':'student','paper':paper,'subject':subject1})
+
+
+def logout_user(request):
+    logout(request)
+    return HttpResponseRedirect("login")
