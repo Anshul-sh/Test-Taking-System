@@ -37,6 +37,7 @@ class Courses(models.Model):
 class Subject(models.Model):
     id=models.AutoField(primary_key=True)
     subject_name=models.CharField(max_length=255)
+    course = models.ForeignKey(Courses, on_delete=models.CASCADE,related_name='course')
     code = models.IntegerField(default=0,validators=[MaxValueValidator(999), MinValueValidator(100)])
     staff_id=models.ForeignKey(UserManager,on_delete=models.CASCADE)
     created_at=models.DateTimeField(auto_now_add=True)
@@ -127,12 +128,12 @@ class Question(models.Model):
         ('3','difficult'),
     }
     id = models.AutoField(primary_key=True)
-    subject = models.OneToOneField(Subject,on_delete=models.CASCADE)
+    subject = models.ManyToManyField(Subject)
     title = models.TextField ('question ')
-    optionA = models.CharField ('Aoption', max_length = 30)
-    optionB = models.CharField ('Boption', max_length = 30)
-    optionC = models.CharField ('Coption', max_length = 30)
-    optionD = models.CharField ('Doption', max_length = 30)
+    optionA = models.CharField ('Aoption', max_length = 300)
+    optionB = models.CharField ('Boption', max_length = 300)
+    optionC = models.CharField ('Coption', max_length = 300)
+    optionD = models.CharField ('Doption', max_length = 300)
     answer = models.CharField ('answer', max_length = 10, choices = ANSWER)
     level = models.CharField ('level', max_length = 10, choices = LEVEL)
     score = models.IntegerField ('score', default = 1)
@@ -169,7 +170,7 @@ class Grade(models.Model):
     grade=models.IntegerField()
 
     def __str__(self):
-        return '<%s:%s>'%(self.sid,self.grade)
+        return '<%s>'%(self.sid)
 
     class Meta:
         db_table='grade'

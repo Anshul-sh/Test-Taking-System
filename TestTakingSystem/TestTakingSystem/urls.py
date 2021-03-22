@@ -34,8 +34,14 @@ urlpatterns = [
     path('profile/',SMViews.Profile.as_view(),name='profile'),
     url(r'^home/$', SMViews.home, name='home'),
     url(r'^support/$', SMViews.support, name='support'),
+    path('logout_user', SMViews.logout_user,name="logout"),
 
     path('student_home', StudentViews.student_home, name="student_home"),
+    path('student_profile', StudentViews.student_profile, name="student_profile"),
+    path('student_profile_save', StudentViews.student_profile_save, name="student_profile_save"),
+    path('student_all_notification',StudentViews.student_all_notification,name="student_all_notification"),
+    path('student_view_result',StudentViews.student_view_result,name="student_view_result"),
+
     url(r'^startExam/$',SMViews.startExam),
 
     # TODO 1: Create the URL for login
