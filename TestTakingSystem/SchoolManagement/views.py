@@ -203,15 +203,6 @@ def login(request):
     return render(request, 'login.html', {'form': form})
 
 
-def startExam(request):
-    sid = request.GET.get('sid')
-    subject1=request.GET.get('subject')
-
-    # student=models.Student.objects.get(id=sid)
-    paper= models.Paper.objects.filter(subject=subject1)
-    return render(request,'exam.html',{'student':'student','paper':paper,'subject':subject1})
-
-
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect("login")

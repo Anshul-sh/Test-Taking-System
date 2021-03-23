@@ -30,7 +30,7 @@
                         </br>
                                   {% if subject_name %}
                                   {% for subject in subject_name %}
-                                  <li> {{ subject.subject_name}} <a href="startExam">Take Exam </a></li>
+                                  <li> {{ subject.subject_name}} <a href="{% url 'student_takeExam' subject.id %}">Take Exam </a></li>
                                   {% endfor %}
                                   </ol>
                                   {% else %}

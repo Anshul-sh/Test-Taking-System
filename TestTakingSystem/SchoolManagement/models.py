@@ -128,7 +128,7 @@ class Question(models.Model):
         ('3','difficult'),
     }
     id = models.AutoField(primary_key=True)
-    subject = models.ManyToManyField(Subject)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     title = models.TextField ('question ')
     optionA = models.CharField ('Aoption', max_length = 300)
     optionB = models.CharField ('Boption', max_length = 300)

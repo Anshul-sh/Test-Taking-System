@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from SchoolManagement.models import Student, Courses, Subject,UserManager
+from SchoolManagement.models import Student, Courses, Subject,UserManager, Paper
 
 
 def student_home(request):
@@ -53,3 +53,9 @@ def student_all_notification(request):
 def student_view_result(request):
     student=Student.objects.get(admin=request.user.id)
     return render(request,"student_template/student_result.html")
+
+def student_takeExam(request,subject_id):
+    student=Student.objects.get(admin=request.user.id)
+    subject = Subject.objects.get(id = subject_id)
+    paper= Paper.objects.filter(subject=subject)
+    return render(request,'exam.html',{'student':student,'paper':paper,'subject':subject})
