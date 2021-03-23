@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n%}
+
+{% load quiz_tags %}
+
+{% block title %} {{ quiz.title }} {% endblock %}
+
+{% block description %} {{ quiz.title }} - {{ quiz.description }} {% endblock %}
+
+{% block content %}
+
+{% if previous.answers %}
+<script>console.log('this is the page');</script>
+
+  <p class="muted"><small>{% trans "The previous question" %}:</small></p>
+  <p>{{ previous.previous_question }}</p>
+
+  {% if previous.previous_outcome %}
+	<div class="alert alert-success">
+  {% else %}
+	<div class="alert alert-warning">
+  {% endif %}
+  	  <p><small>
+		{% trans "Your answer was" %} </small>
+		<strong>
+		  {{ previous.previous_outcome|yesno:"correct,incorrect" }}
+		</strong>
+	  </p>
+
+	</div>
+
+	{% include 'correct_answer.html' %}
+
+	<p><strong>{% trans "Explanation" %}:</strong></p>
+	<div class="well " style="background-color: #fcf8e3;">
+	  <p>{{ previous.previous_question.explanation }}</p>
+	</div>
+
+	<hr>
+
+{% endif %}
+
+<br />
+
+{% if question %}
+
+{% if progress %}
+<div style="float: right;">
+{% trans "Question" %} {{ progress.0|add:1 }} {% trans "of" %} {{ progress.1 }}
+</div>
+<style>
+	#camContainer {
+	margin: 0;
+      padding: 0;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+	canvas {
+      position: absolute;
+    }
+</style>
+<div id="camContainer">
+	<video id="video" width="500" height="350" autoplay muted></video>
+	<script src= "{% static 'js/jquery-2.1.1.min.js'%}"></script>
+<script src="{% static 'js/face-api.js'%}"></script>
+<script>
+
+const video = document.getElementById('video')
+
+const MODEL_URL = '/static/models'
+ircount=0;
+Promise.all([
+  faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+  faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+  faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
+  faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+]).then(startVideo)
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  })}
+
+function startVideo() {
+  navigator.getUserMedia(
+    { video: {} },
+    stream => video.srcObject = stream,
+    err => console.error(err)
+  )
+}
+
+video.addEventListener('play', () => {
+  const canvas = faceapi.createCanvasFromMedia(video)
+  document.getElementById('camContainer').append(canvas)
+  const displaySize = { width: video.width, height: video.height }
+  faceapi.matchDimensions(canvas, displaySize)
+  setInterval(async () => {
+    const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks()
+	canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+	if (detections){
+		const resizedDetections = faceapi.resizeResults(detections, displaySize)
+    	faceapi.draw.drawDetections(canvas, resizedDetections)
+    	faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
+	}
+	else{
+		if(ircount < 5){
+			ircount++;
+			alert('Please pay attention to Exam. Your face is not detected.');
+			await sleep(10000);
+		}
+		else{
+			var newURL = window.location.protocol + "//" + window.location.host + "/"+'staff_notification'+'/'
+			// await $.post(newURL, ,);
+				$.ajax({
+						type: 'POST',
+						url: newURL,
+						data: { 'question':window.location.pathname },
+						success: function(data, status){ 
+					alert("Noticifation send to Teacher.");
+					ircount=0;
+				},
+						async:false
+						});
+		}
+	}
+  }, 100)
+})
+
+	
+</script>
+</div>
+{% endif %}
+
+<p>
+  <small class="muted">{% trans "Question course" %}:</small>
+  <strong>{{ question.course }}</strong>
+
+</p>
+
+<p class="lead">{{ question.content }}</p>
+
+{% if question.figure %}
+    <img src="{{ question.figure.url }}" alt="{{ question.content }}" />
+{% endif %}
+
+<form action="" method="POST">{% csrf_token %}
+  <input type=hidden name="question_id" value="{{ question.id }}">
+
+  <ul class="list-group">
+
+	{% for answer in form.answers %}
+	  <li class="list-group-item">
+	    {{ answer }}
+	  </li>
+	{% endfor %}
+
+  </ul>
+  <input type="submit" value={% trans "next" %} class="btn btn-large btn-block btn-warning" >
+</form>
+
+{% endif %}
+
+<hr>
+
+
+{% endblock %}
