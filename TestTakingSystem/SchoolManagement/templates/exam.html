@@ -35,19 +35,23 @@
         </li>
     </ul>
 </nav>
+ <h4>Please do not switch tab or browser to look for answer. If you caught doing so, after 3 times your exam will be automatically get cancelled.</h4>
+
 <div class="main">
     <!--nr start-->
     <div class="test_main">
         <div class="nr_left">
             <div class="test">
-                <form action="/calGrade/" method="post">
+                <form action="/show_grade" method="post" id="submitform">
+                    {% csrf_token %}
+
                 <input type="hidden" name="sid" value="{{ student.id }}">
                 <input type="hidden" name="subject" value="{{ subject }}">
                     <div class="test_title">
                         <p class="test_time">
                             <i class="icon iconfont">&#xe6fb;</i><b class="alt-1">00:40</b>
                         </p>
-                            <font> <input type = "submit" name = "tijiao" value = "Submit"> </font>
+                            <font> <input type = "submit" value = "Submit"> </font>
                     </div>
 
                         <div class="test_content">
@@ -115,18 +119,37 @@
 
     </div>
     <!--nr end-->
-    <div class="foot"></div>
 </div>
 
-<script>
+<script type="text/javascript">
+    var count = 0;
+
 document.addEventListener('visibilitychange', function(){
    document.title = document.visibilityState;
+   if(document.visibilityState == 'hidden')
+   count++;
+   if(count ==3)
+   {
+       var answer = confirm ("Your test is cancelled")
+       if (answer)
+        window.location.href = "/student_home"
+       else
+          console.log(count);
+   }
+   else
+   {
    console.log(document.visibilityState);
-   prompt ("This is a prompt box", "You Were on another Tab");
+   console.log(count);
+   prompt ("This is a alert box", "You Were on another Tab");
+   }
 });
 
 window.jQuery(function($) {
 		"use strict";
+        
+        $('time').countDown({
+            
+        });
 
 		$('time').countDown({
 			with_separators : false

@@ -62,5 +62,5 @@ def student_takeExam(request,subject_id):
 
 
 def show_grade(request):
-    messages.success(request, 'Form submission successful')
+    messages.success(request, 'You successgully submitted your Test')
     return render(request,"student_template/student_result.html")
