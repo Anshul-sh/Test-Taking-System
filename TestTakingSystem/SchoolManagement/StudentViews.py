@@ -59,3 +59,8 @@ def student_takeExam(request,subject_id):
     subject = Subject.objects.get(id = subject_id)
     paper= Paper.objects.filter(subject=subject)
     return render(request,'exam.html',{'student':student,'paper':paper,'subject':subject})
+
+
+def show_grade(request):
+    messages.success(request, 'Form submission successful')
+    return render(request,"student_template/student_result.html")

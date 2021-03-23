@@ -42,6 +42,7 @@ urlpatterns = [
     path('student_all_notification',StudentViews.student_all_notification,name="student_all_notification"),
     path('student_view_result',StudentViews.student_view_result,name="student_view_result"),
     url(r'student_takeExam/(\d+)', StudentViews.student_takeExam, name="student_takeExam"),
+    path('show_grade', StudentViews.show_grade, name="show_grade"),
 
     # TODO 1: Create the URL for login
     

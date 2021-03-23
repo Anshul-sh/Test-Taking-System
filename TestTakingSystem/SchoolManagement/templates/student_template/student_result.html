@@ -9,6 +9,11 @@ p {
 }
 </style>
       <p>Feature coming soon...</p>
+{% if messages %}
+    {% for message in messages %}
+    <p>{% if message.tags %} {% endif %} {{ message }}</p>
+    {% endfor %}
+{% endif %}
 
     <!-- /.content -->
 {% endblock main_content %}
